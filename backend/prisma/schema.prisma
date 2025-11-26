@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  name            String?
+  transactions    Transaction[]
+  incomes         Income[]
+  savingsTransfers SavingsTransfer[]
+  goals           Goal[]
+  diaryEntries    DiaryEntry[]
+  budgetCategories BudgetCategory[]
+  gamification    Gamification?
+  bursaries       Bursary[]
+  createdAt       DateTime           @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  amount      Float
+  category    String
+  type        String   // "expense" | "income" | "savings"
+  note        String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model Income {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  source    String
+  amount    Float
+  date      DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model SavingsTransfer {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  amount    Float
+  from      String?
+  to        String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model DiaryEntry {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  title     String?
+  body      String
+  emotion   String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model BudgetCategory {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  name      String
+  limit     Float?
+  icon      String?
+  createdAt DateTime @default(now())
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  name          String
+  targetAmount  Float
+  currentAmount Float   @default(0)
+  priority      String  @default("medium")
+  createdAt     DateTime @default(now())
+}
+
+model Gamification {
+  id             String @id @default(cuid())
+  user           User   @relation(fields: [userId], references: [id])
+  userId         String @unique
+  level          Int    @default(1)
+  xp             Int    @default(0)
+  streak         Int    @default(0)
+  persona        String  @default("friendly")
+  dailyChallenge String @default("Complete a no-spend day")
+  badges         String[]
+}
+
+model Bursary {
+  id              String   @id @default(cuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  provider        String
+  monthlyAmount   Float
+  nextPaymentDate DateTime
+  notes           String?
+}
