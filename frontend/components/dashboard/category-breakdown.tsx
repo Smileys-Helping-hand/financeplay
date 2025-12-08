@@ -58,9 +58,7 @@ export function CategoryBreakdown() {
                   <span className="capitalize">{category}</span>
                   <span className="text-slate-400">R{amount.toFixed(0)}</span>
                 </div>
-                <Progress value={pct} className={`bg-slate-900`}>
-                  <div className={`h-2 w-full rounded-full bg-gradient-to-r ${colors[category as TransactionCategory]}`}></div>
-                </Progress>
+                <Progress value={pct} className={`bg-slate-900 [&>div]:bg-gradient-to-r [&>div]:${colors[category as TransactionCategory]}`} />
               </div>
             );
           })}

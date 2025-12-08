@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { buildCoachPrompt } from '../utils/prompt';
+import { authenticate, AuthRequest } from '../middleware/auth';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
 
@@ -17,14 +18,15 @@ export default function aiRouter(prisma: PrismaClient) {
       .optional()
   });
 
-  router.post('/coach', async (req, res) => {
+  router.post('/coach', authenticate, async (req: AuthRequest, res) => {
     const parseResult = bodySchema.safeParse(req.body);
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Invalid coach payload', issues: parseResult.error.format() });
     }
 
     const { prompt, persona, history } = parseResult.data;
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
       include: { transactions: true, goals: true, bursaries: true, gamification: true }
     });
 
@@ -37,7 +39,7 @@ export default function aiRouter(prisma: PrismaClient) {
     try {
       const completion = await openai.responses.create({
         model: 'gpt-4.1-mini',
-        input: buildCoachPrompt(prompt, persona, history, user)
+        input: buildCoachPrompt(prompt, persona, history, user ?? undefined)
       });
       const message = completion.output_text || baseReply;
       res.json({ reply: message, source: 'openai' });

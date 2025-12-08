@@ -85,7 +85,7 @@ export function AiCoachPanel() {
                 <div className="flex items-center gap-2 text-xs text-slate-400">
                   Persona:
                   {(['friendly', 'strict', 'humorous'] as const).map((p) => (
-                    <Button key={p} size="xs" variant={persona === p ? 'secondary' : 'ghost'} onClick={() => setPersona(p)}>
+                    <Button key={p} size="sm" variant={persona === p ? 'default' : 'ghost'} onClick={() => setPersona(p)}>
                       {p}
                     </Button>
                   ))}
@@ -99,7 +99,7 @@ export function AiCoachPanel() {
                   <p className="text-slate-400">AI Challenge Suggestions</p>
                   <div className="flex flex-wrap gap-2">
                     {challengeOptions.map((challenge) => (
-                      <Button key={challenge} variant="outline" size="xs" onClick={() => setInput(challenge)}>
+                      <Button key={challenge} variant="outline" size="sm" onClick={() => setInput(challenge)}>
                         {challenge}
                       </Button>
                     ))}

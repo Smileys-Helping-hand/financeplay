@@ -1,7 +1,7 @@
 type TransactionLike = { amount: number; date: Date; category: string; description: string };
 type GoalLike = { name: string; currentAmount: number; targetAmount: number; priority?: 'low' | 'medium' | 'high' | string };
 type BursaryLike = { provider: string; nextPaymentDate: Date };
-type GamificationLike = { xp?: number; streak?: number; level?: number; badges?: string[] };
+type GamificationLike = { xp?: number; streak?: number; level?: number; badges?: string | string[] };
 export type UserSnapshot = {
   id: string;
   email: string;

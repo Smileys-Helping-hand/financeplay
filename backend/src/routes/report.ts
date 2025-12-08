@@ -2,13 +2,15 @@ import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import PDFDocument from 'pdfkit';
 import { buildWeeklySummary } from '../utils/report-builder';
+import { authenticate, AuthRequest } from '../middleware/auth';
 
 export default function reportRouter(prisma: PrismaClient) {
   const router = Router();
 
-  router.get('/weekly', async (_req: Request, res: Response) => {
+  router.get('/weekly', authenticate, async (req: AuthRequest, res: Response) => {
     try {
-      const user = await prisma.user.findFirst({
+      const user = await prisma.user.findUnique({
+        where: { id: req.userId },
         include: { transactions: true, goals: true, bursaries: true, gamification: true }
       });
 

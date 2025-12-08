@@ -32,6 +32,7 @@ export interface Gamification {
   userId: string;
   level: number;
   xp: number;
+  xpToNext: number;
   streak: number;
   badges: string[];
   dailyChallenge: string;
@@ -60,4 +61,5 @@ export interface FinancialHealth {
   score: number;
   category: 'poor' | 'fair' | 'good';
   summary: string;
+  message?: string;
 }

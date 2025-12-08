@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Bursary, FinancialHealth, Gamification, Goal, Insight, Transaction } from './types';
-import { mockBursaries, mockGamification, mockGoals, mockHealth, mockInsights, mockTransactions, mockUserId } from './mockData';
+import { getUserId } from './api';
 
 interface FinanceState {
   transactions: Transaction[];
@@ -20,12 +20,25 @@ interface FinanceState {
 }
 
 export const useFinanceStore = create<FinanceState>((set) => ({
-  transactions: mockTransactions,
-  goals: mockGoals,
-  bursaries: mockBursaries,
-  gamification: mockGamification,
-  insights: mockInsights,
-  health: mockHealth,
+  transactions: [],
+  goals: [],
+  bursaries: [],
+  gamification: {
+    userId: '',
+    level: 1,
+    xp: 0,
+    xpToNext: 100,
+    streak: 0,
+    persona: 'friendly',
+    dailyChallenge: 'Add your first transaction',
+    badges: []
+  },
+  insights: [],
+  health: {
+    score: 0,
+    category: 'poor',
+    summary: 'Start adding transactions to see your financial health'
+  },
   theme: 'dark',
   addGoal: (goal) => set((state) => ({ goals: [...state.goals, goal] })),
   updateGoal: (goal) =>
@@ -57,4 +70,5 @@ export const generateXpGain = (amount: number) => {
 
 export const levelFromXp = (xp: number) => Math.floor(xp / 500) + 1;
 
-export const userId = mockUserId;
+// User ID from localStorage
+export const getUserIdFromStore = () => getUserId() || '';

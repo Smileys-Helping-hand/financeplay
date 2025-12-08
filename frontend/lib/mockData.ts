@@ -91,6 +91,7 @@ export const mockGamification: Gamification = {
   userId: mockUserId,
   level: 6,
   xp: 3120,
+  xpToNext: 500,
   streak: 12,
   badges: ['Budget Ninja', 'Savings Sprinter', 'Streak Keeper'],
   dailyChallenge: 'Spend R50 less on takeaways this week',

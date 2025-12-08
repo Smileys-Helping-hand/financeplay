@@ -48,7 +48,7 @@ async function main() {
       streak: 12,
       persona: 'friendly',
       dailyChallenge: 'Spend R50 less on takeaways this week',
-      badges: ['Budget Ninja', 'Savings Sprinter', 'Streak Keeper', 'Budget Master', 'Savings Hero']
+      badges: JSON.stringify(['Budget Ninja', 'Savings Sprinter', 'Streak Keeper', 'Budget Master', 'Savings Hero'])
     }
   });
 }

@@ -21,14 +21,14 @@ export function OverviewCards() {
   const topGoal = [...goals].sort((a, b) => priorityValue(b.priority) - priorityValue(a.priority))[0];
 
   const cards = [
-    { title: 'Spend this month', value: `R${spendingTotal.toFixed(0)}`, icon: Wallet, subtitle: 'Food, transport, rent' },
-    { title: 'Saved so far', value: `R${savings.toFixed(0)}`, icon: TrendingUp, subtitle: 'Auto-transfer & round-ups' },
-    { title: 'Next allowance', value: nextAllowance, icon: Calendar, subtitle: 'NSFAS + Scholarships' },
+    { title: 'Spend this month', value: spendingTotal > 0 ? `R${spendingTotal.toFixed(0)}` : 'R0', icon: Wallet, subtitle: 'Food, transport, rent' },
+    { title: 'Saved so far', value: savings > 0 ? `R${savings.toFixed(0)}` : 'R0', icon: TrendingUp, subtitle: 'Auto-transfer & round-ups' },
+    { title: 'Next allowance', value: nextAllowance, icon: Calendar, subtitle: bursaries.length > 0 ? 'NSFAS + Scholarships' : 'Add a bursary to track' },
     {
       title: 'Top priority goal',
-      value: topGoal?.name ?? 'Add a goal',
+      value: topGoal?.name ?? 'No goals yet',
       icon: Target,
-      subtitle: topGoal ? `${topGoal.currentAmount} / ${topGoal.targetAmount}` : 'Set a target to track progress'
+      subtitle: topGoal ? `R${topGoal.currentAmount} / R${topGoal.targetAmount}` : 'Create your first savings goal'
     }
   ];
 
