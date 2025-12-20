@@ -3,6 +3,7 @@ import { Bursary, FinancialHealth, Gamification, Goal, Insight, Transaction } fr
 import { getUserId } from './api';
 
 interface FinanceState {
+  user: { id: string; email: string; name?: string | null };
   transactions: Transaction[];
   goals: Goal[];
   bursaries: Bursary[];
@@ -20,6 +21,7 @@ interface FinanceState {
 }
 
 export const useFinanceStore = create<FinanceState>((set) => ({
+  user: { id: '', email: '', name: null },
   transactions: [],
   goals: [],
   bursaries: [],

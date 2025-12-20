@@ -196,6 +196,7 @@ export async function loadAllData() {
     
     // Update store with all data
     useFinanceStore.setState({
+      user: snapshot.user,
       transactions: snapshot.transactions,
       goals: snapshot.goals,
       bursaries: snapshot.bursaries,
