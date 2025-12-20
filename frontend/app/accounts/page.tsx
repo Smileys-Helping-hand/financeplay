@@ -226,7 +226,7 @@ export default function AccountsPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {accounts.length === 0 && (
             <Card className="p-8 col-span-full text-center text-slate-400">
-              <p>No accounts yet. Click "Add Account" to track your wallets and bank accounts!</p>
+              <p>No accounts yet. Click &quot;Add Account&quot; to track your wallets and bank accounts!</p>
             </Card>
           )}
           {accounts.map((account) => (

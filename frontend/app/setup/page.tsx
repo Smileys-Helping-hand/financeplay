@@ -47,7 +47,7 @@ export default function SetupPage() {
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-3xl font-bold">FinancePlay</h1>
           </div>
-          <p className="text-slate-400">Welcome! Let's set up your account</p>
+          <p className="text-slate-400">Welcome! Let&apos;s set up your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

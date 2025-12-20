@@ -165,7 +165,7 @@ export default function BursariesPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {bursaries.length === 0 && (
             <Card className="p-8 col-span-full text-center text-slate-400">
-              <p>No bursaries yet. Click "Add Bursary" to get started!</p>
+              <p>No bursaries yet. Click &quot;Add Bursary&quot; to get started!</p>
             </Card>
           )}
           {bursaries.map((bursary) => (
