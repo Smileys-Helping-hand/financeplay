@@ -9,6 +9,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 import { ErrorBoundary } from '../../components/ui/error-boundary';
 import { Trash2, TrendingUp } from 'lucide-react';
 import axios from 'axios';
+import { loadAllData } from '../../lib/dataLoader';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
 
@@ -53,6 +54,8 @@ export default function GoalsPage() {
     try {
       const response = await axios.get(`${API_URL}/data/snapshot`);
       setGoals(response.data.goals || []);
+      // Reload all data to update insights and health
+      await loadAllData();
     } catch (error) {
       console.error('Failed to fetch goals:', error);
     } finally {

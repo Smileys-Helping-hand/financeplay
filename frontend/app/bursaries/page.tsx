@@ -8,6 +8,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 import { FormEvent, useEffect, useState } from 'react';
 import { ErrorBoundary } from '../../components/ui/error-boundary';
 import axios from 'axios';
+import { loadAllData } from '../../lib/dataLoader';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
 
@@ -37,6 +38,8 @@ export default function BursariesPage() {
     try {
       const response = await axios.get(`${API_URL}/data/snapshot`);
       setBursaries(response.data.bursaries || []);
+      // Reload all data to update insights and health
+      await loadAllData();
     } catch (error) {
       console.error('Failed to fetch bursaries:', error);
     } finally {
