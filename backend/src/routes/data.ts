@@ -24,12 +24,20 @@ export default function dataRouter(prisma: PrismaClient) {
   // Login - find existing user by email
   router.post('/user/login', async (req, res) => {
     try {
-      const { email } = req.body;
+      const { email, firebaseUid } = req.body;
       
-      const user = await prisma.user.findFirst({ where: { email } });
+      let user = await prisma.user.findFirst({ where: { email } });
       
       if (!user) {
         return res.status(404).json({ error: 'Account not found. Please sign up first.' });
+      }
+      
+      // Update Firebase UID if not set
+      if (firebaseUid && !user.firebaseUid) {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { firebaseUid }
+        });
       }
       
       res.json({ user });
@@ -42,7 +50,7 @@ export default function dataRouter(prisma: PrismaClient) {
   // Initialize or get user (signup)
   router.post('/user/init', async (req, res) => {
     try {
-      const { email, name } = req.body;
+      const { email, name, firebaseUid } = req.body;
       
       let user = await prisma.user.findFirst({ where: { email } });
       
@@ -51,7 +59,7 @@ export default function dataRouter(prisma: PrismaClient) {
       }
       
       user = await prisma.user.create({
-        data: { email, name }
+        data: { email, name, firebaseUid }
       });
       
       // Initialize gamification

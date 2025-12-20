@@ -4,44 +4,31 @@ import { FormEvent, useState } from 'react';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Sparkles, LogIn, UserPlus, TrendingUp, Target, Zap } from 'lucide-react';
+import { Sparkles, LogIn, UserPlus, TrendingUp, Target, Zap, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
-import { setUserId } from '../../lib/api';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+import { signInWithEmail } from '../../lib/auth';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !password) return;
 
     setLoading(true);
     setError('');
     
     try {
-      // Try to find existing user by email
-      const response = await axios.post(`${API_URL}/data/user/login`, { email });
-      
-      if (response.data.user) {
-        setUserId(response.data.user.id);
-        router.push('/dashboard');
-      } else {
-        setError('Account not found. Please sign up first.');
-      }
+      await signInWithEmail(email, password);
+      router.push('/dashboard');
     } catch (err: any) {
-      console.error('Failed to login:', err);
-      if (err.response?.status === 404) {
-        setError('Account not found. Please sign up first.');
-      } else {
-        setError(err.response?.data?.error || 'Failed to login. Please try again.');
-      }
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -136,6 +123,28 @@ export default function LoginPage() {
                   required
                   className="text-lg"
                 />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Password</label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    minLength={6}
+                    className="text-lg pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
               
               {error && (

@@ -6,7 +6,7 @@ import { BarChart2, Goal, Home, PiggyBank, Settings, Sparkles, ArrowLeftRight, W
 import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
 import { useFinanceStore } from '../../lib/store';
-import { clearUserId } from '../../lib/api';
+import { logOut } from '../../lib/auth';
 import { Button } from '../ui/button';
 
 const links = [
@@ -25,9 +25,13 @@ export function Navbar() {
   const level = useFinanceStore((s) => s.gamification.level);
   const userName = useFinanceStore((s) => s.user?.name || '');
   
-  const handleLogout = () => {
-    clearUserId();
-    router.push('/');
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
   
   return (
