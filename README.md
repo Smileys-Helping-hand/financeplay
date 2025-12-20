@@ -1,6 +1,8 @@
-# 💰 FinancePlay
+# 💰 XPFinance
 
-A gamified personal finance management app designed for students and young professionals. Track expenses, set savings goals, manage bursaries, and get AI-powered financial advice - all while leveling up!
+A gamified personal finance management app designed for students and young professionals. Track expenses, set savings goals, manage bursaries, and get AI-powered financial advice - all while leveling up and earning XP!
+
+🌐 **Domain:** xpfinance
 
 ![Status](https://img.shields.io/badge/status-production%20ready-brightgreen)
 ![Backend](https://img.shields.io/badge/backend-Node.js%20%2B%20Express-green)
