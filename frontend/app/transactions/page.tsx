@@ -116,7 +116,7 @@ export default function TransactionsPage() {
     }
   };
 
-  const useTemplate = (template: typeof quickTemplates[0]) => {
+  const applyTemplate = (template: typeof quickTemplates[0]) => {
     setDescription(template.name);
     setCategory(template.category);
     setAmount(template.amount.toString());
@@ -269,7 +269,7 @@ export default function TransactionsPage() {
                 return (
                   <button
                     key={template.name}
-                    onClick={() => useTemplate(template)}
+                    onClick={() => applyTemplate(template)}
                     className="p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 hover:border-primary/50 transition-all text-left group"
                   >
                     <Icon className="h-4 w-4 text-primary mb-1" />
