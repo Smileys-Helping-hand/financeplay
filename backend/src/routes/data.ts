@@ -21,33 +21,53 @@ type SnapshotPayload = {
 export default function dataRouter(prisma: PrismaClient) {
   const router = Router();
 
-  // Initialize or get user
+  // Login - find existing user by email
+  router.post('/user/login', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      const user = await prisma.user.findFirst({ where: { email } });
+      
+      if (!user) {
+        return res.status(404).json({ error: 'Account not found. Please sign up first.' });
+      }
+      
+      res.json({ user });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'Failed to login' });
+    }
+  });
+
+  // Initialize or get user (signup)
   router.post('/user/init', async (req, res) => {
     try {
       const { email, name } = req.body;
       
       let user = await prisma.user.findFirst({ where: { email } });
       
-      if (!user) {
-        user = await prisma.user.create({
-          data: { email, name }
-        });
-        
-        // Initialize gamification
-        await prisma.gamification.create({
-          data: {
-            userId: user.id,
-            level: 1,
-            xp: 0,
-            streak: 0,
-            persona: 'friendly',
-            dailyChallenge: 'Add your first transaction',
-            badges: JSON.stringify([])
-          }
-        });
+      if (user) {
+        return res.status(409).json({ error: 'An account with this email already exists.' });
       }
       
-      res.json(user);
+      user = await prisma.user.create({
+        data: { email, name }
+      });
+      
+      // Initialize gamification
+      await prisma.gamification.create({
+        data: {
+          userId: user.id,
+          level: 1,
+          xp: 0,
+          streak: 0,
+          persona: 'friendly',
+          dailyChallenge: 'Add your first transaction',
+          badges: JSON.stringify([])
+        }
+      });
+      
+      res.json({ userId: user.id, user });
     } catch (err) {
       res.status(500).json({ error: 'Failed to initialize user' });
     }

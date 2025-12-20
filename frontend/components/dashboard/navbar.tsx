@@ -23,19 +23,23 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const level = useFinanceStore((s) => s.gamification.level);
+  const userName = useFinanceStore((s) => s.user.name);
   
   const handleLogout = () => {
     clearUserId();
-    router.push('/setup');
+    router.push('/');
   };
   
   return (
     <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-slate-950/40 px-4 py-6 md:block">
-      <div className="flex items-center gap-2 mb-8">
-        <Sparkles className="h-6 w-6 text-primary" />
-        <div>
-          <div className="font-semibold text-lg">FinancePlay</div>
-          <div className="text-xs text-slate-400">Level {level} Explorer</div>
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="h-6 w-6 text-primary" />
+          <div className="font-semibold text-lg">XPFinance</div>
+        </div>
+        <div className="text-xs text-slate-400">
+          {userName && <div className="font-medium text-white mb-1">Welcome, {userName}!</div>}
+          <div>Level {level} Explorer</div>
         </div>
       </div>
       <nav className="space-y-2 flex-1">
