@@ -23,7 +23,7 @@ export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const level = useFinanceStore((s) => s.gamification.level);
-  const userName = useFinanceStore((s) => s.user.name);
+  const userName = useFinanceStore((s) => s.user?.name || '');
   
   const handleLogout = () => {
     clearUserId();
