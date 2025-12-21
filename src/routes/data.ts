@@ -26,11 +26,16 @@ export default function dataRouter(prisma: PrismaClient) {
     try {
       const { email, firebaseUid } = req.body;
       
+      console.log('Login attempt for email:', email);
+      
       let user = await prisma.user.findFirst({ where: { email } });
       
       if (!user) {
+        console.log('User not found for email:', email);
         return res.status(404).json({ error: 'Account not found. Please sign up first.' });
       }
+      
+      console.log('User found:', user.id);
       
       // Update Firebase UID if not set
       if (firebaseUid && !user.firebaseUid) {
@@ -41,9 +46,14 @@ export default function dataRouter(prisma: PrismaClient) {
       }
       
       res.json({ user });
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({ error: 'Failed to login' });
+    } catch (error: any) {
+      console.error('Login error details:', {
+        message: error.message,
+        code: error.code,
+        meta: error.meta,
+        stack: error.stack
+      });
+      res.status(500).json({ error: 'Failed to login', details: error.message });
     }
   });
 
