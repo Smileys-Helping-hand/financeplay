@@ -76,9 +76,16 @@ export async function signInWithEmail(email: string, password: string) {
       throw new Error('Invalid email address.');
     } else if (error.code === 'auth/too-many-requests') {
       throw new Error('Too many failed attempts. Please try again later.');
+    } else if (error.code === 'auth/invalid-credential') {
+      throw new Error('Invalid email or password.');
     }
     
-    throw new Error(error.response?.data?.error || error.message || 'Failed to sign in.');
+    // Handle backend errors
+    if (error.response?.status === 404) {
+      throw new Error('Account not found in database. Please contact support or sign up again.');
+    }
+    
+    throw new Error(error.response?.data?.error || error.message || 'Failed to sign in. Please check your connection.');
   }
 }
 

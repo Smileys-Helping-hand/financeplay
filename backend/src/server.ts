@@ -20,4 +20,10 @@ app.use('/data', dataRouter(prisma));
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
-app.listen(port, () => console.log(`FinancePlay API running on ${port}`));
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => console.log(`FinancePlay API running on ${port}`));
+}
+
+// Export for Vercel serverless
+export default app;

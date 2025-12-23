@@ -26,18 +26,49 @@ export default function dataRouter(prisma: PrismaClient) {
     try {
       const { email, firebaseUid } = req.body;
       
+      if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+      }
+      
       let user = await prisma.user.findFirst({ where: { email } });
       
       if (!user) {
-        return res.status(404).json({ error: 'Account not found. Please sign up first.' });
-      }
-      
-      // Update Firebase UID if not set
-      if (firebaseUid && !user.firebaseUid) {
-        user = await prisma.user.update({
-          where: { id: user.id },
-          data: { firebaseUid }
-        });
+        // If user authenticated with Firebase but doesn't exist in DB, create them
+        if (firebaseUid) {
+          console.log(`Creating database user for Firebase account: ${email}`);
+          user = await prisma.user.create({
+            data: { 
+              email, 
+              firebaseUid,
+              name: email.split('@')[0] // Use email prefix as default name
+            }
+          });
+          
+          // Initialize gamification for new user
+          await prisma.gamification.create({
+            data: {
+              userId: user.id,
+              level: 1,
+              xp: 0,
+              streak: 0,
+              persona: 'friendly',
+              dailyChallenge: 'Add your first transaction',
+              badges: JSON.stringify([])
+            }
+          });
+          
+          console.log(`Successfully created database user: ${user.id}`);
+        } else {
+          return res.status(404).json({ error: 'Account not found. Please sign up first.' });
+        }
+      } else {
+        // Update Firebase UID if not set
+        if (firebaseUid && !user.firebaseUid) {
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: { firebaseUid }
+          });
+        }
       }
       
       res.json({ user });
@@ -52,15 +83,27 @@ export default function dataRouter(prisma: PrismaClient) {
     try {
       const { email, name, firebaseUid } = req.body;
       
+      if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+      }
+      
+      if (!name) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
       let user = await prisma.user.findFirst({ where: { email } });
       
       if (user) {
+        console.log(`User already exists: ${email}`);
         return res.status(409).json({ error: 'An account with this email already exists.' });
       }
       
+      // Create user in database
       user = await prisma.user.create({
         data: { email, name, firebaseUid }
       });
+      
+      console.log(`Created new user: ${user.id} - ${email}`);
       
       // Initialize gamification
       await prisma.gamification.create({
@@ -77,6 +120,7 @@ export default function dataRouter(prisma: PrismaClient) {
       
       res.json({ userId: user.id, user });
     } catch (err) {
+      console.error('User init error:', err);
       res.status(500).json({ error: 'Failed to initialize user' });
     }
   });
