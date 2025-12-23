@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // Create axios instance with interceptors
 const api = axios.create({
