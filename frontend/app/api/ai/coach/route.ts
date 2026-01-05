@@ -107,4 +107,4 @@ Recent transactions: ${user.transactions.length}`;
     });
   }
 }
-}
+

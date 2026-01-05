@@ -1,10 +1,7 @@
 import './globals.css';
 import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
-import { Navbar } from '../components/dashboard/navbar';
-import { AiCoachPanel } from '../components/coach/ai-coach-panel';
-import { ThemeToggle } from '../components/ui/theme-toggle';
-import { ErrorBoundary } from '../components/ui/error-boundary';
+import { LayoutContent } from '../components/layout-content';
 
 export const metadata = {
   title: 'FinancePlay',
@@ -16,18 +13,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-slate-950 text-slate-100">
         <Providers>
-          <div className="flex min-h-screen">
-            <Navbar />
-            <main className="flex-1 p-6 pb-24 md:pb-10">
-              <div className="flex justify-end mb-4">
-                <ThemeToggle />
-              </div>
-              {children}
-            </main>
-          </div>
-          <ErrorBoundary>
-            <AiCoachPanel />
-          </ErrorBoundary>
+          <LayoutContent>{children}</LayoutContent>
         </Providers>
       </body>
     </html>

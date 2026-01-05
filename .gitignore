@@ -17,3 +17,6 @@ dist
 /.turbo
 .DS_Store
 /prisma/*.db
+
+.vercel
+.env*.local

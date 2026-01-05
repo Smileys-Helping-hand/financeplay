@@ -1,13 +1,37 @@
-# 💰 XPFinance
+# 💰 XPFinance (FinancePlay)
 
 A gamified personal finance management app designed for students and young professionals. Track expenses, set savings goals, manage bursaries, and get AI-powered financial advice - all while leveling up and earning XP!
 
 🌐 **Domain:** xpfinance
 
 ![Status](https://img.shields.io/badge/status-production%20ready-brightgreen)
-![Backend](https://img.shields.io/badge/backend-Node.js%20%2B%20Express-green)
-![Frontend](https://img.shields.io/badge/frontend-Next.js%2014-blue)
-![Database](https://img.shields.io/badge/database-SQLite%20%2B%20Prisma-orange)
+![Stack](https://img.shields.io/badge/stack-Next.js%20Full%20Stack-blue)
+![Database](https://img.shields.io/badge/database-PostgreSQL%20%2B%20Prisma-orange)
+
+## 🚀 Quick Start - Unified Deployment
+
+**Important Update:** The frontend and backend have been consolidated into a **single Next.js application**!
+
+### Local Development
+
+```bash
+cd frontend
+npm install
+npx prisma migrate dev
+npm run dev
+```
+
+Open http://localhost:3005
+
+### Deploy to Production
+
+See [UNIFIED_DEPLOYMENT.md](./UNIFIED_DEPLOYMENT.md) for complete instructions.
+
+**Quick Vercel Deploy:**
+1. Push to GitHub
+2. Import to Vercel (root: `frontend`)
+3. Add `DATABASE_URL` env variable
+4. Deploy!
 
 ## ✨ Features
 
