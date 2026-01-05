@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
+// Always use /api for unified deployment - works both client and server side
+const API_BASE = '/api';
 
 // Create axios instance with interceptors
 const api = axios.create({
