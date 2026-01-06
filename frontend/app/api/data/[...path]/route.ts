@@ -102,7 +102,7 @@ export async function DELETE(
 
 // Handler functions
 async function handleSnapshot(request: NextRequest) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -172,7 +172,7 @@ async function handleSnapshot(request: NextRequest) {
 }
 
 async function handleGetAccounts(request: NextRequest) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -184,7 +184,7 @@ async function handleGetAccounts(request: NextRequest) {
 }
 
 async function handleCreateTransaction(request: NextRequest, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -216,7 +216,7 @@ async function handleCreateTransaction(request: NextRequest, body: any) {
 }
 
 async function handleDeleteTransaction(request: NextRequest, id: string) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -240,7 +240,7 @@ async function handleDeleteTransaction(request: NextRequest, id: string) {
 }
 
 async function handleCreateGoal(request: NextRequest, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -254,7 +254,7 @@ async function handleCreateGoal(request: NextRequest, body: any) {
 }
 
 async function handleUpdateGoal(request: NextRequest, id: string, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -274,7 +274,7 @@ async function handleUpdateGoal(request: NextRequest, id: string, body: any) {
 }
 
 async function handleDeleteGoal(request: NextRequest, id: string) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -291,7 +291,7 @@ async function handleDeleteGoal(request: NextRequest, id: string) {
 }
 
 async function handleCreateBursary(request: NextRequest, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -305,7 +305,7 @@ async function handleCreateBursary(request: NextRequest, body: any) {
 }
 
 async function handleDeleteBursary(request: NextRequest, id: string) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -322,7 +322,7 @@ async function handleDeleteBursary(request: NextRequest, id: string) {
 }
 
 async function handleCreateAccount(request: NextRequest, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -336,7 +336,7 @@ async function handleCreateAccount(request: NextRequest, body: any) {
 }
 
 async function handleUpdateAccount(request: NextRequest, id: string, body: any) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -356,7 +356,7 @@ async function handleUpdateAccount(request: NextRequest, id: string, body: any) 
 }
 
 async function handleDeleteAccount(request: NextRequest, id: string) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {

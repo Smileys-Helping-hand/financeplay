@@ -11,7 +11,7 @@ const schema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const userId = getUserIdFromRequest(request);
+  const userId = await getUserIdFromRequest(request);
   if (!userId) {
     return NextResponse.json({ 
       reply: 'Please log in to use the AI coach!' 
