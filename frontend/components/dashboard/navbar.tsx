@@ -41,7 +41,7 @@ export function Navbar() {
           <img 
             src="/logo.png" 
             alt="XPFinance" 
-            className="h-8 w-8 transform scale-x-[-1]"
+            className="h-8 w-auto transform scale-x-[-1]"
           />
           <div className="font-semibold text-lg">XPFinance</div>
         </div>
