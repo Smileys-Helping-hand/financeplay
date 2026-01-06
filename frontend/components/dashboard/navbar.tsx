@@ -38,11 +38,7 @@ export function Navbar() {
     <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-slate-950/40 px-4 py-6 md:block">
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
-          <img 
-            src="/logo.png" 
-            alt="XPFinance" 
-            className="h-8 w-auto transform scale-x-[-1]"
-          />
+          <Sparkles className="h-6 w-6 text-primary" />
           <div className="font-semibold text-lg">XPFinance</div>
         </div>
         <div className="text-xs text-slate-400">
