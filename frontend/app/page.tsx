@@ -176,7 +176,7 @@ export default function Home() {
             <Users className="h-16 w-16 mx-auto mb-6 text-primary" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Join the Community</h2>
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-              Thousands of users are already leveling up their finances with XPFinance
+              Start your journey to financial freedom with XPFinance
             </p>
             <Link href="/signup">
               <Button size="lg" className="text-lg px-10 py-6 shadow-2xl shadow-primary/30">
@@ -190,7 +190,7 @@ export default function Home() {
 
       {/* Footer */}
       <div className="relative z-10 px-4 py-8 text-center text-slate-500 border-t border-slate-800">
-        <p className="mb-2">© 2024 XPFinance. Level up your money game.</p>
+        <p className="mb-2">© 2025 XPFinance. Level up your money game.</p>
         <p className="text-sm">Made with ❤️ for students and young professionals</p>
       </div>
     </div>
