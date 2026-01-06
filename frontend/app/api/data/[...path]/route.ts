@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getUserIdFromRequest } from '@/lib/server-utils';
-
-const prisma = new PrismaClient();
+import { prisma, getUserIdFromRequest } from '@/lib/server/auth';
 
 // Forward all /data/* requests  
 export async function GET(

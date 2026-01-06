@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getUserIdFromRequest } from '@/lib/server-utils';
+import { prisma, getUserIdFromRequest } from '@/lib/server/auth';
 import OpenAI from 'openai';
 import { z } from 'zod';
-
-const prisma = new PrismaClient();
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
 
 const schema = z.object({
