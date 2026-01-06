@@ -39,9 +39,9 @@ export function Navbar() {
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-2">
           <img 
-            src="/logo.svg" 
+            src="/logo.png" 
             alt="XPFinance" 
-            className="h-8 w-8"
+            className="h-8 w-8 transform scale-x-[-1]"
           />
           <div className="font-semibold text-lg">XPFinance</div>
         </div>
