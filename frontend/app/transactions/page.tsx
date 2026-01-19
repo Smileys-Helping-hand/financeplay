@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -13,10 +13,9 @@ import {
   Lightbulb, Wifi, Droplet, Flame, Calendar, Tag, Copy,
   TrendingUp, TrendingDown, DollarSign, Repeat, Star, Edit2
 } from 'lucide-react';
-import axios from 'axios';
-import { loadAllData } from '../../lib/dataLoader';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+import api from '../../lib/api';
+import { loadAllData } from '../../lib/dataLoader';
 
 type Transaction = {
   id: string;
@@ -73,6 +72,32 @@ const quickTemplates = [
 ];
 
 export default function TransactionsPage() {
+
+  // File upload state (moved inside component)
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Enhanced: After upload, automatically fetch transactions
+    const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('statement', file);
+      try {
+        await api.post(`/data/import-statement`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        // Automatically pull transactions after upload
+        await fetchTransactions();
+        alert('Bank statement imported and transactions updated!');
+      } catch (err) {
+        alert('Failed to import statement.');
+      } finally {
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,7 +122,7 @@ export default function TransactionsPage() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data/accounts`);
+      const response = await api.get(`/data/accounts`);
       setAccounts(response.data || []);
     } catch (error) {
       console.error('Failed to fetch accounts:', error);
@@ -106,7 +131,7 @@ export default function TransactionsPage() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data/snapshot`);
+      const response = await api.get(`/data/snapshot`);
       setTransactions(response.data.transactions || []);
       await loadAllData();
     } catch (error) {
@@ -128,7 +153,7 @@ export default function TransactionsPage() {
     if (!amount || !description) return;
 
     try {
-      await axios.post(`${API_URL}/data/transactions`, {
+      await api.post(`/data/transactions`, {
         amount: parseFloat(amount),
         category,
         description,
@@ -153,7 +178,7 @@ export default function TransactionsPage() {
     if (!confirm('Delete this transaction?')) return;
     
     try {
-      await axios.delete(`${API_URL}/data/transactions/${id}`);
+      await api.delete(`/data/transactions/${id}`);
       fetchTransactions();
     } catch (error) {
       console.error('Failed to delete transaction:', error);
@@ -244,15 +269,36 @@ export default function TransactionsPage() {
         </div>
 
         {/* Main Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
             <p className="text-xs text-slate-500">Financial Activity</p>
             <h1 className="text-2xl font-semibold">{filteredTransactions.length} Transactions</h1>
           </div>
-          <Button onClick={() => setShowForm(!showForm)} size="lg" className="gap-2">
-            <Plus className="h-5 w-5" />
-            Add Transaction
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowForm(!showForm)} size="lg" className="gap-2">
+              <Plus className="h-5 w-5" />
+              Add Transaction
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="gap-2"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              <Upload className="h-5 w-5" />
+              {uploading ? 'Uploading...' : 'Import Statement'}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+              disabled={uploading}
+            />
+          </div>
         </div>
 
         {/* Quick Templates */}

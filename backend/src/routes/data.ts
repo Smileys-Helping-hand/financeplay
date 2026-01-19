@@ -1,6 +1,11 @@
 import { Router } from 'express';
+import multer from 'multer';
+import path from 'path';
 import { PrismaClient, Transaction as TxModel } from '@prisma/client';
 import { authenticate, AuthRequest } from '../middleware/auth';
+import { parseCSV, parsePDF, parseXLSX } from '../utils/statement-parser';
+import { learnAndCategorize, categorizeByKeywords } from '../utils/keyword-categorizer';
+import { categorizeWithAI } from '../utils/ai-categorizer';
 
 type SnapshotCategoryTotals = Record<string, number>;
 type SnapshotTransaction = Omit<TxModel, 'date' | 'createdAt'> & { date: string };
@@ -20,6 +25,64 @@ type SnapshotPayload = {
 
 export default function dataRouter(prisma: PrismaClient) {
   const router = Router();
+
+  // File upload middleware
+  const upload = multer();
+
+  // Import bank statement (CSV, PDF, XLSX)
+  router.post('/import-statement', authenticate, upload.single('statement'), async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: 'No file uploaded' });
+
+      const ext = path.extname(file.originalname).toLowerCase();
+      let transactions: any[] = [];
+      if (ext === '.csv') {
+        transactions = await parseCSV(file.buffer);
+      } else if (ext === '.pdf') {
+        await parsePDF(file.buffer);
+        return res.status(501).json({ error: 'PDF parsing not yet implemented' });
+      } else if (ext === '.xlsx' || ext === '.xls') {
+        transactions = parseXLSX(file.buffer);
+      } else {
+        return res.status(400).json({ error: 'Unsupported file type' });
+      }
+
+      const keywordMap = await learnAndCategorize(prisma, userId);
+
+      const created = [];
+      for (const tx of transactions) {
+        if (!tx.date || !tx.amount) continue;
+
+        let category = tx.category || categorizeByKeywords(tx.description || '', keywordMap);
+        if (!category || category === 'other') {
+          try {
+            category = await categorizeWithAI(tx.description || '', parseFloat(tx.amount), tx.date);
+          } catch {
+            category = 'other';
+          }
+        }
+
+        const createdTx = await prisma.transaction.create({
+          data: {
+            userId,
+            date: new Date(tx.date),
+            description: tx.description || '',
+            amount: parseFloat(tx.amount),
+            category: category || 'other'
+          }
+        });
+
+        created.push(createdTx);
+      }
+
+      res.json({ imported: created.length });
+    } catch (err) {
+      console.error('Import statement error:', err);
+      res.status(500).json({ error: 'Failed to import statement' });
+    }
+  });
 
   // Login - find existing user by email
   router.post('/user/login', async (req, res) => {
