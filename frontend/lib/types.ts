@@ -1,3 +1,5 @@
+
+export type HalalStatus = 'halal' | 'haram' | 'doubtful';
 export type TransactionCategory = 'food' | 'transport' | 'rent' | 'fun' | 'education' | 'savings' | 'utilities' | 'income';
 
 export interface Transaction {
@@ -7,6 +9,7 @@ export interface Transaction {
   amount: number;
   category: TransactionCategory;
   description: string;
+  halalStatus?: HalalStatus; // Optional for backward compatibility
 }
 
 export interface Goal {

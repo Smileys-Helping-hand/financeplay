@@ -15,6 +15,7 @@ const links = [
   { href: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { href: '/goals', label: 'Goals', icon: Goal },
   { href: '/bursaries', label: 'Bursaries', icon: PiggyBank },
+  { href: '/islamic-finance', label: 'Islamic Finance', icon: Sparkles },
   { href: '/reports', label: 'Reports', icon: BarChart2 },
   { href: '/settings', label: 'Settings', icon: Settings }
 ];
