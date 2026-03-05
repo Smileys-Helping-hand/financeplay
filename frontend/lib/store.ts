@@ -1,12 +1,14 @@
 import { create } from 'zustand';
-import { Bursary, FinancialHealth, Gamification, Goal, Insight, Transaction } from './types';
-import { getUserId } from './api';
+import { Bursary, Budget, FinancialHealth, Gamification, Goal, Insight, Loan, Transaction } from './types';
+import { getUserId, persistXpGain } from './api';
 
 interface FinanceState {
   user: { id: string; email: string; name?: string | null };
   transactions: Transaction[];
   goals: Goal[];
   bursaries: Bursary[];
+  loans: Loan[];
+  budgets: Budget[];
   gamification: Gamification;
   insights: Insight[];
   health: FinancialHealth;
@@ -17,14 +19,17 @@ interface FinanceState {
   addTransaction: (tx: Transaction) => void;
   registerXpGain: (xp: number) => void;
   setPersona: (persona: Gamification['persona']) => void;
+  setUser: (user: { id: string; email: string; name?: string | null }) => void;
   toggleTheme: () => void;
 }
 
-export const useFinanceStore = create<FinanceState>((set) => ({
+export const useFinanceStore = create<FinanceState>((set, get) => ({
   user: { id: '', email: '', name: null },
   transactions: [],
   goals: [],
   bursaries: [],
+  loans: [],
+  budgets: [],
   gamification: {
     userId: '',
     level: 1,
@@ -47,19 +52,26 @@ export const useFinanceStore = create<FinanceState>((set) => ({
     set((state) => ({ goals: state.goals.map((g) => (g.id === goal.id ? { ...g, ...goal } : g)) })),
   removeGoal: (id) => set((state) => ({ goals: state.goals.filter((g) => g.id !== id) })),
   addTransaction: (tx) => set((state) => ({ transactions: [tx, ...state.transactions] })),
-  registerXpGain: (xp) =>
+  registerXpGain: (xp) => {
     set((state) => {
       const updatedXp = state.gamification.xp + xp;
-      return {
+      const newLevel = levelFromXp(updatedXp);
+      const newState = {
         gamification: {
           ...state.gamification,
           xp: updatedXp,
           lastXpGain: xp,
-          level: levelFromXp(updatedXp)
+          level: newLevel,
+          xpToNext: (newLevel * 500) - updatedXp
         }
       };
-    }),
+      // Persist to backend (fire-and-forget)
+      persistXpGain({ xp: updatedXp, level: newLevel }).catch(() => {});
+      return newState;
+    });
+  },
   setPersona: (persona) => set((state) => ({ gamification: { ...state.gamification, persona } })),
+  setUser: (user) => set({ user }),
   toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' }))
 }));
 

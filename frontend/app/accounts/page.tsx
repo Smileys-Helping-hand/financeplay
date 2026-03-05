@@ -7,9 +7,7 @@ import { Input } from '../../components/ui/input';
 import { Skeleton } from '../../components/ui/skeleton';
 import { ErrorBoundary } from '../../components/ui/error-boundary';
 import { Wallet, Building2, PiggyBank, TrendingUp, Plus, Trash2, Edit } from 'lucide-react';
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+import { fetchAccounts as fetchAccountsAPI, createAccount as createAccountAPI, updateAccount as updateAccountAPI, deleteAccount as deleteAccountAPI } from '../../lib/api';
 
 type Account = {
   id: string;
@@ -44,8 +42,8 @@ export default function AccountsPage() {
 
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data/accounts`);
-      setAccounts(response.data || []);
+      const data = await fetchAccountsAPI();
+      setAccounts(data || []);
     } catch (error) {
       console.error('Failed to fetch accounts:', error);
     } finally {
@@ -60,7 +58,7 @@ export default function AccountsPage() {
     const selectedType = accountTypes.find(t => t.value === type);
 
     try {
-      await axios.post(`${API_URL}/data/accounts`, {
+      await createAccountAPI({
         name,
         type,
         balance: parseFloat(balance),
@@ -86,9 +84,7 @@ export default function AccountsPage() {
     if (!newBalance) return;
 
     try {
-      await axios.put(`${API_URL}/data/accounts/${accountId}`, {
-        balance: parseFloat(newBalance)
-      });
+      await updateAccountAPI(accountId, parseFloat(newBalance));
       fetchAccounts();
     } catch (error) {
       console.error('Failed to update account:', error);
@@ -100,7 +96,7 @@ export default function AccountsPage() {
     if (!confirm('Delete this account? This will not delete associated transactions.')) return;
     
     try {
-      await axios.delete(`${API_URL}/data/accounts/${id}`);
+      await deleteAccountAPI(id);
       fetchAccounts();
     } catch (error) {
       console.error('Failed to delete account:', error);

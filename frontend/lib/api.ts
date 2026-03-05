@@ -72,6 +72,9 @@ export async function createTransaction(data: {
   description: string;
   date: string;
   accountId?: string;
+  halalStatus?: string;
+  loanId?: string;
+  isRecurring?: boolean;
 }) {
   const response = await api.post('/data/transactions', data);
   return response.data;
@@ -152,6 +155,82 @@ export async function askCoach(prompt: string, persona: string, history?: any[])
 
 export async function getWeeklyReport() {
   const response = await api.get('/reports/weekly', { responseType: 'blob' });
+  return response.data;
+}
+
+// Loan API
+export async function fetchLoans() {
+  const response = await api.get('/data/loans');
+  return response.data;
+}
+
+export async function createLoan(data: {
+  name: string;
+  loanType: string;
+  totalAmount: number;
+  remainingBalance?: number;
+  interestRate?: number;
+  monthlyPayment: number;
+  startDate: string;
+  endDate?: string;
+  purpose?: string;
+  lender?: string;
+  isIslamic?: boolean;
+  notes?: string;
+}) {
+  const response = await api.post('/data/loans', data);
+  return response.data;
+}
+
+export async function updateLoan(id: string, data: Partial<{
+  name: string; loanType: string; totalAmount: number; remainingBalance: number;
+  interestRate: number; monthlyPayment: number; endDate: string;
+  purpose: string; lender: string; isIslamic: boolean; notes: string;
+}>) {
+  const response = await api.put(`/data/loans/${id}`, data);
+  return response.data;
+}
+
+export async function deleteLoan(id: string) {
+  const response = await api.delete(`/data/loans/${id}`);
+  return response.data;
+}
+
+export async function addLoanPayment(loanId: string, data: { amount: number; date: string; notes?: string }) {
+  const response = await api.post(`/data/loans/${loanId}/payments`, data);
+  return response.data;
+}
+
+export async function deleteLoanPayment(loanId: string, paymentId: string) {
+  const response = await api.delete(`/data/loans/${loanId}/payments/${paymentId}`);
+  return response.data;
+}
+
+// Budget API
+export async function fetchBudgets(month?: string) {
+  const response = await api.get('/data/budgets', { params: { month } });
+  return response.data;
+}
+
+export async function saveBudget(data: { category: string; monthlyLimit: number; month: string }) {
+  const response = await api.post('/data/budgets', data);
+  return response.data;
+}
+
+export async function deleteBudget(id: string) {
+  const response = await api.delete(`/data/budgets/${id}`);
+  return response.data;
+}
+
+// Gamification XP persistence
+export async function persistXpGain(data: { xp: number; level: number; streak?: number; badges?: string[] }) {
+  const response = await api.put('/data/gamification', data);
+  return response.data;
+}
+
+// User profile update
+export async function updateProfile(data: { name: string; currency?: string }) {
+  const response = await api.put('/data/user/profile', data);
   return response.data;
 }
 

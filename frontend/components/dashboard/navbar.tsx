@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { BarChart2, Goal, Home, PiggyBank, Settings, Sparkles, ArrowLeftRight, Wallet, LogOut } from 'lucide-react';
+import { BarChart2, Banknote, BookOpen, Goal, Home, PiggyBank, Settings, Sparkles, ArrowLeftRight, Wallet, LogOut } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
 import { useFinanceStore } from '../../lib/store';
@@ -14,7 +14,9 @@ const links = [
   { href: '/accounts', label: 'Accounts', icon: Wallet },
   { href: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { href: '/goals', label: 'Goals', icon: Goal },
+  { href: '/loans', label: 'Loans & Debt', icon: Banknote },
   { href: '/bursaries', label: 'Bursaries', icon: PiggyBank },
+  { href: '/guide', label: 'Finance Guide', icon: BookOpen },
   { href: '/islamic-finance', label: 'Islamic Finance', icon: Sparkles },
   { href: '/reports', label: 'Reports', icon: BarChart2 },
   { href: '/settings', label: 'Settings', icon: Settings }

@@ -1,6 +1,10 @@
 import { parse as csvParse } from 'csv-parse/sync';
-import pdfParse from 'pdf-parse';
+import pdfParseLib from 'pdf-parse';
 import xlsx from 'xlsx';
+
+// pdf-parse has a quirky default export — handle both CJS and ESM shapes
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const pdfParse = (typeof (pdfParseLib as any) === 'function' ? pdfParseLib : (pdfParseLib as any).default) as (buf: Buffer) => Promise<{ text: string }>;
 
 export async function parseCSV(buffer: Buffer) {
   const text = buffer.toString('utf-8');

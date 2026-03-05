@@ -8,10 +8,7 @@ import { Progress } from '../../components/ui/progress';
 import { Skeleton } from '../../components/ui/skeleton';
 import { ErrorBoundary } from '../../components/ui/error-boundary';
 import { Trash2, TrendingUp } from 'lucide-react';
-import axios from 'axios';
-import { loadAllData } from '../../lib/dataLoader';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+import { createGoal as createGoalAPI, updateGoal as updateGoalAPI, deleteGoal as deleteGoalAPI, fetchSnapshot } from '../../lib/api';
 
 type Goal = {
   id: string;
@@ -52,10 +49,8 @@ export default function GoalsPage() {
 
   const fetchGoals = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data/snapshot`);
-      setGoals(response.data.goals || []);
-      // Reload all data to update insights and health
-      await loadAllData();
+      const data = await fetchSnapshot();
+      setGoals(data.goals || []);
     } catch (error) {
       console.error('Failed to fetch goals:', error);
     } finally {
@@ -68,15 +63,12 @@ export default function GoalsPage() {
     if (!name || !target) return;
 
     try {
-      await axios.post(`${API_URL}/data/goals`, {
+      await createGoalAPI({
         name,
         targetAmount: parseFloat(target),
         currentAmount: 0,
         deadline: new Date(deadline).toISOString(),
-        priority,
-        category,
-        autoSave,
-        autoSaveAmount: autoSave ? parseFloat(autoSaveAmount) : null
+        priority
       });
       
       setName('');
@@ -94,13 +86,10 @@ export default function GoalsPage() {
   };
 
   const handleUpdateProgress = async (goalId: string, currentAmount: number) => {
-    const newAmount = prompt(`Update current amount (current: R${currentAmount}):`);
-    if (!newAmount) return;
-
     try {
-      await axios.put(`${API_URL}/data/goals/${goalId}`, {
-        currentAmount: parseFloat(newAmount)
-      });
+      const newAmount = prompt(`Update current amount (current: R${currentAmount}):`);
+      if (!newAmount) return;
+      await updateGoalAPI(goalId, parseFloat(newAmount));
       fetchGoals();
     } catch (error) {
       console.error('Failed to update goal:', error);
@@ -112,7 +101,7 @@ export default function GoalsPage() {
     if (!confirm('Delete this goal?')) return;
     
     try {
-      await axios.delete(`${API_URL}/data/goals/${id}`);
+      await deleteGoalAPI(id);
       fetchGoals();
     } catch (error) {
       console.error('Failed to delete goal:', error);

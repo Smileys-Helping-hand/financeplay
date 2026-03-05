@@ -7,10 +7,7 @@ import { Input } from '../../components/ui/input';
 import { Skeleton } from '../../components/ui/skeleton';
 import { FormEvent, useEffect, useState } from 'react';
 import { ErrorBoundary } from '../../components/ui/error-boundary';
-import axios from 'axios';
-import { loadAllData } from '../../lib/dataLoader';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4002';
+import { createBursary as createBursaryAPI, deleteBursary as deleteBursaryAPI, fetchSnapshot, askCoach } from '../../lib/api';
 
 type Bursary = {
   id: string;
@@ -24,6 +21,8 @@ export default function BursariesPage() {
   const [bursaries, setBursaries] = useState<Bursary[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [aiPlan, setAiPlan] = useState<string | null>(null);
+  const [loadingPlan, setLoadingPlan] = useState(false);
   
   const [provider, setProvider] = useState('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
@@ -36,10 +35,8 @@ export default function BursariesPage() {
 
   const fetchBursaries = async () => {
     try {
-      const response = await axios.get(`${API_URL}/data/snapshot`);
-      setBursaries(response.data.bursaries || []);
-      // Reload all data to update insights and health
-      await loadAllData();
+      const data = await fetchSnapshot();
+      setBursaries(data.bursaries || []);
     } catch (error) {
       console.error('Failed to fetch bursaries:', error);
     } finally {
@@ -52,7 +49,7 @@ export default function BursariesPage() {
     if (!provider || !monthlyAmount) return;
 
     try {
-      await axios.post(`${API_URL}/data/bursaries`, {
+      await createBursaryAPI({
         provider,
         monthlyAmount: parseFloat(monthlyAmount),
         nextPaymentDate: new Date(nextPaymentDate).toISOString(),
@@ -71,11 +68,29 @@ export default function BursariesPage() {
     }
   };
 
+  const handleGeneratePlan = async () => {
+    if (bursaries.length === 0) {
+      alert('Add a bursary first!');
+      return;
+    }
+    setLoadingPlan(true);
+    try {
+      const total = bursaries.reduce((s, b) => s + b.monthlyAmount, 0);
+      const prompt = `I receive R${total.toFixed(2)} per month from bursaries/allowances (${bursaries.map(b => `${b.provider}: R${b.monthlyAmount}`).join(', ')}). Give me a practical monthly budget plan split into envelopes (food, transport, rent, savings, emergency fund, extras). Keep it short and actionable.`;
+      const result = await askCoach(prompt, 'friendly', []);
+      setAiPlan(result.reply || result.message || 'Here is your plan!');
+    } catch {
+      setAiPlan('Could not generate plan. Make sure the AI coach is connected.');
+    } finally {
+      setLoadingPlan(false);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this bursary?')) return;
     
     try {
-      await axios.delete(`${API_URL}/data/bursaries/${id}`);
+      await deleteBursaryAPI(id);
       fetchBursaries();
     } catch (error) {
       console.error('Failed to delete bursary:', error);
@@ -196,8 +211,16 @@ export default function BursariesPage() {
             <p className="text-sm font-semibold flex items-center gap-2"><PiggyBank className="h-4 w-4" />How to use allowances better</p>
             <p className="text-xs text-slate-400">Split your bursary into food, transport, and hustle envelopes to protect your goals.</p>
           </div>
-          <Button>Generate AI plan</Button>
+          <Button onClick={handleGeneratePlan} disabled={loadingPlan}>
+            {loadingPlan ? 'Generating...' : 'Generate AI plan'}
+          </Button>
         </Card>
+        {aiPlan && (
+          <Card className="p-4 bg-primary/10 border-primary/30">
+            <p className="text-sm font-semibold mb-2 text-primary">Your AI Budget Plan</p>
+            <p className="text-sm text-slate-200 whitespace-pre-line">{aiPlan}</p>
+          </Card>
+        )}
       </div>
     </ErrorBoundary>
   );

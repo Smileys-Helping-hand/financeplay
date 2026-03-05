@@ -200,6 +200,7 @@ export async function loadAllData() {
       transactions: snapshot.transactions,
       goals: snapshot.goals,
       bursaries: snapshot.bursaries,
+      loans: snapshot.loans || [],
       gamification,
       insights,
       health

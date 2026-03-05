@@ -1,6 +1,6 @@
 'use client';
 
-import { Wallet, TrendingUp, Calendar, Target } from 'lucide-react';
+import { Wallet, TrendingUp, Calendar, Target, Banknote } from 'lucide-react';
 import { Card } from '../ui/card';
 import { useFinanceStore } from '../../lib/store';
 import { Goal } from '../../lib/types';
@@ -9,8 +9,10 @@ export function OverviewCards() {
   const transactions = useFinanceStore((s) => s.transactions);
   const goals = useFinanceStore((s) => s.goals);
   const bursaries = useFinanceStore((s) => s.bursaries);
+  const loans = useFinanceStore((s) => s.loans);
+
   const spendingTotal = transactions
-    .filter((t) => t.category !== 'income' && t.category !== 'savings')
+    .filter((t) => t.category !== 'income' && t.category !== 'savings' && t.category !== 'allowance')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
   const savings = transactions
     .filter((t) => t.category === 'savings')
@@ -19,6 +21,8 @@ export function OverviewCards() {
   const priorityRank: Record<Goal['priority'], number> = { high: 3, medium: 2, low: 1 };
   const priorityValue = (priority?: Goal['priority']) => priorityRank[priority ?? 'medium'] ?? 0;
   const topGoal = [...goals].sort((a, b) => priorityValue(b.priority) - priorityValue(a.priority))[0];
+  const totalDebt = loans.reduce((sum, l) => sum + l.remainingBalance, 0);
+  const monthlyDebt = loans.reduce((sum, l) => sum + (l.monthlyPayment || 0), 0);
 
   const cards = [
     { title: 'Spend this month', value: spendingTotal > 0 ? `R${spendingTotal.toFixed(0)}` : 'R0', icon: Wallet, subtitle: 'Food, transport, rent' },
@@ -29,7 +33,13 @@ export function OverviewCards() {
       value: topGoal?.name ?? 'No goals yet',
       icon: Target,
       subtitle: topGoal ? `R${topGoal.currentAmount} / R${topGoal.targetAmount}` : 'Create your first savings goal'
-    }
+    },
+    ...(loans.length > 0 ? [{
+      title: 'Total debt remaining',
+      value: `R${totalDebt.toLocaleString('en-ZA', { maximumFractionDigits: 0 })}`,
+      icon: Banknote,
+      subtitle: `R${monthlyDebt.toFixed(0)}/mo across ${loans.length} loan${loans.length !== 1 ? 's' : ''}`
+    }] : [])
   ];
 
   return (

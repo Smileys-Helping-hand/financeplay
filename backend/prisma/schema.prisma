@@ -17,6 +17,8 @@ model User {
   gamification Gamification?
   bursaries    Bursary[]
   accounts     Account[]
+  loans        Loan[]
+  budgets      Budget[]
   createdAt   DateTime      @default(now())
 }
 
@@ -38,10 +40,13 @@ model Transaction {
   user        User     @relation(fields: [userId], references: [id])
   userId      String
   accountId   String?
+  loanId      String?  // Link transaction to a loan (loan spending tracking)
   date        DateTime
   amount      Float
   category    String
   description String
+  halalStatus String?  // halal | haram | doubtful
+  isRecurring Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
 
@@ -80,4 +85,46 @@ model Bursary {
   monthlyAmount   Float
   nextPaymentDate DateTime
   notes           String?
+}
+
+model Loan {
+  id               String        @id @default(cuid())
+  user             User          @relation(fields: [userId], references: [id])
+  userId           String
+  name             String        // e.g., "Wedding Loan", "Renovation Loan"
+  loanType         String        @default("personal") // personal, mortgage, vehicle, student, home-improvement, other
+  totalAmount      Float
+  remainingBalance Float
+  interestRate     Float         @default(0) // Annual interest rate %
+  monthlyPayment   Float
+  startDate        DateTime
+  endDate          DateTime?
+  purpose          String?       // Free text description
+  lender           String?
+  isIslamic        Boolean       @default(false) // Sharia-compliant arrangement
+  notes            String?
+  payments         LoanPayment[]
+  createdAt        DateTime      @default(now())
+}
+
+model LoanPayment {
+  id        String   @id @default(cuid())
+  loan      Loan     @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  loanId    String
+  amount    Float
+  date      DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model Budget {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  category     String
+  monthlyLimit Float
+  month        String   // "2026-03" format
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, category, month])
 }

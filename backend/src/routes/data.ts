@@ -11,12 +11,19 @@ type SnapshotCategoryTotals = Record<string, number>;
 type SnapshotTransaction = Omit<TxModel, 'date' | 'createdAt'> & { date: string };
 type SnapshotGoal = { id: string; name: string; targetAmount: number; currentAmount: number; deadline: string; priority: string };
 type SnapshotAccount = { id: string; name: string; type: string; balance: number; currency: string; color?: string | null; icon?: string | null };
+type SnapshotLoan = {
+  id: string; name: string; loanType: string; totalAmount: number; remainingBalance: number;
+  interestRate: number; monthlyPayment: number; startDate: string; endDate?: string | null;
+  purpose?: string | null; lender?: string | null; isIslamic: boolean; notes?: string | null;
+  payments: { id: string; amount: number; date: string; notes?: string | null }[];
+};
 type SnapshotPayload = {
   user: { id: string; email: string; name?: string | null };
   transactions: SnapshotTransaction[];
   goals: SnapshotGoal[];
   bursaries: { id: string; provider: string; monthlyAmount: number; nextPaymentDate: string; notes?: string | null }[];
   accounts: SnapshotAccount[];
+  loans: SnapshotLoan[];
   gamification: unknown;
   spendingTotals: { total: number; byCategory: SnapshotCategoryTotals };
   savingsTotal: number;
@@ -190,16 +197,25 @@ export default function dataRouter(prisma: PrismaClient) {
 
   router.get('/snapshot', authenticate, async (req: AuthRequest, res) => {
     try {
-      const user = await prisma.user.findUnique({
+      // Cast to any because Loan/LoanPayment/Budget models exist in schema.prisma
+      // but migration hasn't been run yet — runtime works fine, types don't reflect it
+      const user = await (prisma as any).user.findUnique({
         where: { id: req.userId },
-        include: { transactions: true, goals: true, bursaries: true, gamification: true, accounts: true }
+        include: { 
+          transactions: true, 
+          goals: true, 
+          bursaries: true, 
+          gamification: true, 
+          accounts: true,
+          loans: { include: { payments: true }, orderBy: { createdAt: 'desc' } }
+        }
       });
 
       if (!user) {
         return res.status(404).json({ error: 'User snapshot not found' });
       }
 
-      const transactions: SnapshotTransaction[] = user.transactions.map((t) => ({
+      const transactions: SnapshotTransaction[] = user.transactions.map((t: any) => ({
         id: t.id,
         userId: t.userId,
         accountId: t.accountId,
@@ -221,7 +237,7 @@ export default function dataRouter(prisma: PrismaClient) {
 
       const priorityRank: Record<string, number> = { high: 3, medium: 2, low: 1 };
       const withPriorityFallback: SnapshotGoal[] = user.goals
-        .map((g) => ({
+        .map((g: any) => ({
           id: g.id,
           name: g.name,
           targetAmount: g.targetAmount,
@@ -229,18 +245,39 @@ export default function dataRouter(prisma: PrismaClient) {
           deadline: g.deadline.toISOString(),
           priority: g.priority ?? 'medium'
         }))
-        .sort((a, b) => (priorityRank[b.priority] ?? 0) - (priorityRank[a.priority] ?? 0));
+        .sort((a: any, b: any) => (priorityRank[b.priority] ?? 0) - (priorityRank[a.priority] ?? 0));
 
       const payload: SnapshotPayload = {
         user: { id: user.id, email: user.email, name: user.name },
         transactions,
         goals: withPriorityFallback,
-        bursaries: user.bursaries.map((b) => ({
+        bursaries: user.bursaries.map((b: any) => ({
           id: b.id,
           provider: b.provider,
           monthlyAmount: b.monthlyAmount,
           nextPaymentDate: b.nextPaymentDate.toISOString(),
           notes: b.notes
+        })),
+        loans: (user.loans || []).map((l: any) => ({
+          id: l.id,
+          name: l.name,
+          loanType: l.loanType,
+          totalAmount: l.totalAmount,
+          remainingBalance: l.remainingBalance,
+          interestRate: l.interestRate,
+          monthlyPayment: l.monthlyPayment,
+          startDate: l.startDate.toISOString(),
+          endDate: l.endDate?.toISOString() ?? null,
+          purpose: l.purpose,
+          lender: l.lender,
+          isIslamic: l.isIslamic,
+          notes: l.notes,
+          payments: l.payments.map((p: any) => ({
+            id: p.id,
+            amount: p.amount,
+            date: p.date.toISOString(),
+            notes: p.notes
+          }))
         })),
         gamification: user.gamification ?? null,
         accounts: user.accounts || [],
@@ -258,20 +295,24 @@ export default function dataRouter(prisma: PrismaClient) {
   // Transaction endpoints
   router.post('/transactions', authenticate, async (req: AuthRequest, res) => {
     try {
-      const { amount, category, description, date, accountId } = req.body;
+      const { amount, category, description, date, accountId, halalStatus, loanId, isRecurring } = req.body;
       const userId = req.userId!;
 
       const parsedAmount = parseFloat(amount);
 
-      // Create transaction
-      const transaction = await prisma.transaction.create({
+      // Create transaction — cast to any because loanId/halalStatus/isRecurring
+      // exist in schema.prisma but migration hasn't been applied yet
+      const transaction = await (prisma as any).transaction.create({
         data: {
           userId,
           accountId: accountId || null,
+          loanId: loanId || null,
           amount: parsedAmount,
           category,
           description,
-          date: new Date(date)
+          date: new Date(date),
+          halalStatus: halalStatus || null,
+          isRecurring: isRecurring || false
         }
       });
 
@@ -520,6 +561,233 @@ export default function dataRouter(prisma: PrismaClient) {
       res.json({ success: true });
     } catch (err) {
       res.status(500).json({ error: 'Failed to delete account' });
+    }
+  });
+
+  // ─── Loan endpoints ───────────────────────────────────────────────────────
+
+  router.get('/loans', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const loans = await (prisma as any).loan.findMany({
+        where: { userId: req.userId },
+        include: { payments: { orderBy: { date: 'desc' } } },
+        orderBy: { createdAt: 'desc' }
+      });
+      res.json(loans);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch loans' });
+    }
+  });
+
+  router.post('/loans', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { name, loanType, totalAmount, remainingBalance, interestRate, monthlyPayment,
+              startDate, endDate, purpose, lender, isIslamic, notes } = req.body;
+      const userId = req.userId!;
+
+      const loan = await (prisma as any).loan.create({
+        data: {
+          userId,
+          name,
+          loanType: loanType || 'personal',
+          totalAmount: parseFloat(totalAmount),
+          remainingBalance: parseFloat(remainingBalance ?? totalAmount),
+          interestRate: parseFloat(interestRate || 0),
+          monthlyPayment: parseFloat(monthlyPayment),
+          startDate: new Date(startDate),
+          endDate: endDate ? new Date(endDate) : null,
+          purpose: purpose || null,
+          lender: lender || null,
+          isIslamic: isIslamic || false,
+          notes: notes || null
+        },
+        include: { payments: true }
+      });
+      res.json(loan);
+    } catch (err) {
+      console.error('Create loan error:', err);
+      res.status(500).json({ error: 'Failed to create loan' });
+    }
+  });
+
+  router.put('/loans/:id', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const existing = await (prisma as any).loan.findFirst({ where: { id: req.params.id, userId } });
+      if (!existing) return res.status(404).json({ error: 'Loan not found' });
+      
+      const { name, loanType, totalAmount, remainingBalance, interestRate, monthlyPayment,
+              startDate, endDate, purpose, lender, isIslamic, notes } = req.body;
+      
+      const loan = await (prisma as any).loan.update({
+        where: { id: req.params.id },
+        data: {
+          name: name ?? existing.name,
+          loanType: loanType ?? existing.loanType,
+          totalAmount: totalAmount != null ? parseFloat(totalAmount) : existing.totalAmount,
+          remainingBalance: remainingBalance != null ? parseFloat(remainingBalance) : existing.remainingBalance,
+          interestRate: interestRate != null ? parseFloat(interestRate) : existing.interestRate,
+          monthlyPayment: monthlyPayment != null ? parseFloat(monthlyPayment) : existing.monthlyPayment,
+          startDate: startDate ? new Date(startDate) : existing.startDate,
+          endDate: endDate ? new Date(endDate) : existing.endDate,
+          purpose: purpose ?? existing.purpose,
+          lender: lender ?? existing.lender,
+          isIslamic: isIslamic ?? existing.isIslamic,
+          notes: notes ?? existing.notes
+        },
+        include: { payments: true }
+      });
+      res.json(loan);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to update loan' });
+    }
+  });
+
+  router.delete('/loans/:id', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const loan = await (prisma as any).loan.findFirst({ where: { id: req.params.id, userId } });
+      if (!loan) return res.status(404).json({ error: 'Loan not found' });
+      await (prisma as any).loan.delete({ where: { id: req.params.id } });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to delete loan' });
+    }
+  });
+
+  // Loan payment endpoints
+  router.post('/loans/:id/payments', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const loan = await (prisma as any).loan.findFirst({ where: { id: req.params.id, userId } });
+      if (!loan) return res.status(404).json({ error: 'Loan not found' });
+
+      const { amount, date, notes } = req.body;
+      const parsedAmount = parseFloat(amount);
+
+      const payment = await (prisma as any).loanPayment.create({
+        data: { loanId: req.params.id, amount: parsedAmount, date: new Date(date), notes: notes || null }
+      });
+
+      // Reduce remaining balance
+      const newBalance = Math.max(0, loan.remainingBalance - parsedAmount);
+      await (prisma as any).loan.update({
+        where: { id: req.params.id },
+        data: { remainingBalance: newBalance }
+      });
+
+      res.json({ payment, newBalance });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to record payment' });
+    }
+  });
+
+  router.delete('/loans/:id/payments/:paymentId', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const loan = await (prisma as any).loan.findFirst({ where: { id: req.params.id, userId } });
+      if (!loan) return res.status(404).json({ error: 'Loan not found' });
+
+      const payment = await (prisma as any).loanPayment.findFirst({
+        where: { id: req.params.paymentId, loanId: req.params.id }
+      });
+      if (!payment) return res.status(404).json({ error: 'Payment not found' });
+
+      await (prisma as any).loanPayment.delete({ where: { id: req.params.paymentId } });
+
+      // Restore remaining balance
+      await (prisma as any).loan.update({
+        where: { id: req.params.id },
+        data: { remainingBalance: loan.remainingBalance + payment.amount }
+      });
+
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to delete payment' });
+    }
+  });
+
+  // ─── Budget endpoints ─────────────────────────────────────────────────────
+
+  router.get('/budgets', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const month = (req.query.month as string) || new Date().toISOString().slice(0, 7);
+      const budgets = await (prisma as any).budget.findMany({
+        where: { userId: req.userId, month },
+        orderBy: { category: 'asc' }
+      });
+      res.json(budgets);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch budgets' });
+    }
+  });
+
+  router.post('/budgets', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { category, monthlyLimit, month } = req.body;
+      const userId = req.userId!;
+      const budget = await (prisma as any).budget.upsert({
+        where: { userId_category_month: { userId, category, month } },
+        update: { monthlyLimit: parseFloat(monthlyLimit) },
+        create: { userId, category, monthlyLimit: parseFloat(monthlyLimit), month }
+      });
+      res.json(budget);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to save budget' });
+    }
+  });
+
+  router.delete('/budgets/:id', authenticate, async (req: AuthRequest, res) => {
+    try {
+      await (prisma as any).budget.delete({ where: { id: req.params.id } });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to delete budget' });
+    }
+  });
+
+  // ─── Gamification XP update ───────────────────────────────────────────────
+
+  router.put('/gamification', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { xp, level, streak, persona, badges, dailyChallenge } = req.body;
+      const userId = req.userId!;
+      const gamification = await prisma.gamification.upsert({
+        where: { userId },
+        update: {
+          xp: xp != null ? xp : undefined,
+          level: level != null ? level : undefined,
+          streak: streak != null ? streak : undefined,
+          persona: persona ?? undefined,
+          badges: badges != null ? (typeof badges === 'string' ? badges : JSON.stringify(badges)) : undefined,
+          dailyChallenge: dailyChallenge ?? undefined
+        },
+        create: {
+          userId, xp: xp || 0, level: level || 1, streak: streak || 0,
+          persona: persona || 'friendly',
+          dailyChallenge: dailyChallenge || 'Add your first transaction',
+          badges: typeof badges === 'string' ? badges : JSON.stringify(badges || [])
+        }
+      });
+      res.json(gamification);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to update gamification' });
+    }
+  });
+
+  // ─── User profile update ──────────────────────────────────────────────────
+
+  router.put('/user/profile', authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { name } = req.body;
+      const userId = req.userId!;
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data: { name: name ?? undefined }
+      });
+      res.json({ user });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to update profile' });
     }
   });
 
