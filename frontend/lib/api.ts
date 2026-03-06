@@ -123,7 +123,7 @@ export async function deleteBursary(id: string) {
 
 export async function fetchAccounts() {
   const response = await api.get('/data/accounts');
-  return response.data;
+  return response.data?.accounts || [];
 }
 
 export async function createAccount(data: {

@@ -1,4 +1,4 @@
-import { fetchSnapshot, fetchAccounts } from './api';
+import { fetchSnapshot } from './api';
 import { useFinanceStore } from './store';
 import { Gamification, FinancialHealth, Insight } from './types';
 
@@ -160,7 +160,6 @@ export function generateInsights(
 export async function loadAllData() {
   try {
     const snapshot = await fetchSnapshot();
-    const accounts = await fetchAccounts();
     
     // Calculate derived data
     const health = calculateFinancialHealth(

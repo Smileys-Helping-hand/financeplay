@@ -123,7 +123,7 @@ export default function TransactionsPage() {
   const fetchAccounts = async () => {
     try {
       const response = await api.get(`/data/accounts`);
-      setAccounts(response.data || []);
+      setAccounts(response.data?.accounts || []);
     } catch (error) {
       console.error('Failed to fetch accounts:', error);
     }
