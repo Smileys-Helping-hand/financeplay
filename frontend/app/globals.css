@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 .dark {
@@ -11,13 +11,57 @@
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply bg-zinc-950 text-zinc-100 antialiased;
+  font-family: 'Inter', ui-sans-serif, system-ui;
 }
 
+/* ──────────────────────────────────────────────
+   Neo-Banking Arcade design system
+────────────────────────────────────────────── */
+
 .card {
-  @apply bg-slate-900/70 border border-slate-800 rounded-2xl p-4 shadow-lg;
+  @apply bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-xl;
+  backdrop-filter: blur(12px);
+}
+
+.card-glow-green {
+  @apply border-neon-green/30 shadow-[0_0_20px_rgba(0,255,106,0.12)];
+}
+
+.card-glow-gold {
+  @apply border-neon-gold/30 shadow-[0_0_20px_rgba(255,215,0,0.12)];
+}
+
+.card-glow-blue {
+  @apply border-neon-blue/30 shadow-[0_0_20px_rgba(0,212,255,0.12)];
 }
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-neon-blue;
+}
+
+/* Burn Rate bar glow animations */
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 255, 106, 0.6); }
+  50%       { box-shadow: 0 0 28px rgba(0, 255, 106, 0.9); }
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 12px rgba(255, 59, 92, 0.7); }
+  50%       { box-shadow: 0 0 32px rgba(255, 59, 92, 1); }
+}
+
+.bar-pulse-green { animation: pulse-green 2s ease-in-out infinite; }
+.bar-pulse-red   { animation: pulse-red   1s ease-in-out infinite; }
+
+/* Bottom nav safe area */
+.bottom-nav-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Confetti canvas: stays on top */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
 }

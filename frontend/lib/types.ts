@@ -111,3 +111,21 @@ export interface FinancialHealth {
   summary: string;
   message?: string;
 }
+
+// ── Dream Vaults ────────────────────────────────────────────
+export type VaultMilestone = '25' | '50' | '75' | '100';
+
+export interface DreamVault {
+  id: string;
+  userId: string;
+  title: string;
+  emoji: string;
+  targetAmount: number;
+  currentAmount: number;
+  isMultiplayer: boolean;
+  locked: boolean;
+  milestonesBadges: VaultMilestone[]; // unlocked milestone keys
+  createdAt: string;
+  updatedAt: string;
+}
+

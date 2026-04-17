@@ -17,7 +17,8 @@ model User {
   gamification Gamification?
   bursaries    Bursary[]
   accounts     Account[]
-  createdAt   DateTime      @default(now())
+  dreamVaults  DreamVault[]
+  createdAt    DateTime      @default(now())
 }
 
 model Account {
@@ -81,3 +82,23 @@ model Bursary {
   nextPaymentDate DateTime
   notes           String?
 }
+
+// ──────────────────────────────────────────────────────────────────────────
+// Dream Vaults – savings quests
+// ──────────────────────────────────────────────────────────────────────────
+
+model DreamVault {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  title         String                      // e.g. "Bali 2026"
+  emoji         String   @default("🏦")    // vault icon
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  isMultiplayer Boolean  @default(false)
+  locked        Boolean  @default(false)   // locked vault can't be drawn from
+  milestonesBadges String @default("[]")  // JSON array of unlocked milestone keys
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
