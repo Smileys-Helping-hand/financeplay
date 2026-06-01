@@ -5,6 +5,7 @@ import { useFinanceStore } from '../lib/store';
 import { loadAllData } from '../lib/dataLoader';
 import { isAuthenticated } from '../lib/api';
 import { usePathname } from 'next/navigation';
+import { ToastProvider } from './ui/toast';
 
 export function Providers({ children }: { children: ReactNode }) {
   const theme = useFinanceStore((s) => s.theme);
@@ -27,5 +28,5 @@ export function Providers({ children }: { children: ReactNode }) {
     }
   }, [pathname]);
 
-  return <>{children}</>;
+  return <ToastProvider>{children}</ToastProvider>;
 }

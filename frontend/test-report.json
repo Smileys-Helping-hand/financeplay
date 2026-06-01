@@ -1,0 +1,181 @@
+{
+  "timestamp": "2026-06-01T13:29:29.210Z",
+  "summary": {
+    "totalTests": 20,
+    "passedTests": 17,
+    "passRate": "85%",
+    "bugsFound": 1
+  },
+  "bugs": [
+    {
+      "severity": "high",
+      "message": "Signup navigation timeout or error"
+    }
+  ],
+  "testResults": {
+    "Authentication & Setup": [
+      {
+        "name": "Landing page loads",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Signup page accessible",
+        "passed": true,
+        "details": ""
+      }
+    ],
+    "Dashboard": [
+      {
+        "name": "Dashboard title visible",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Spending card visible",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Budget remaining card visible",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Financial health indicator",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Add transaction button",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Dashboard nav link",
+        "passed": false,
+        "details": ""
+      },
+      {
+        "name": "Reports page loads",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Generate report button",
+        "passed": true,
+        "details": ""
+      }
+    ],
+    "Transactions": [
+      {
+        "name": "Transactions page loads",
+        "passed": false,
+        "details": ""
+      }
+    ],
+    "Goals": [
+      {
+        "name": "Goals page loads",
+        "passed": true,
+        "details": ""
+      }
+    ],
+    "Gamification": [
+      {
+        "name": "Trophy room loads",
+        "passed": true,
+        "details": ""
+      }
+    ],
+    "Mobile Responsiveness": [
+      {
+        "name": "Dashboard on mobile loads",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Bottom navigation visible",
+        "passed": false,
+        "details": ""
+      },
+      {
+        "name": "Cards render on mobile",
+        "passed": true,
+        "details": "10 cards found"
+      },
+      {
+        "name": "Dashboard on landscape loads",
+        "passed": true,
+        "details": ""
+      }
+    ],
+    "UI/UX Quality": [
+      {
+        "name": "No critical console errors",
+        "passed": true,
+        "details": "Clean"
+      },
+      {
+        "name": "Main content area exists",
+        "passed": true,
+        "details": ""
+      },
+      {
+        "name": "Buttons rendered",
+        "passed": true,
+        "details": "2 buttons"
+      }
+    ]
+  },
+  "logs": [
+    "[15:29:12] \n╔════════════════════════════════════════╗",
+    "[15:29:12] ║  FinancePlay Comprehensive Test Suite  ║",
+    "[15:29:12] ╚════════════════════════════════════════╝\n",
+    "[15:29:12] \n📝 TEST 1: Authentication & User Setup",
+    "[15:29:13] ✓ Authentication & Setup: Landing page loads",
+    "[15:29:14] ✓ Authentication & Setup: Signup page accessible",
+    "[15:29:14] ✓ Signup form visible",
+    "[15:29:14] Attempting signup with test credentials...",
+    "[15:29:19] \n📊 TEST 2: Dashboard Features",
+    "[15:29:21] ✓ Dashboard: Dashboard title visible",
+    "[15:29:21] ✓ Dashboard: Spending card visible",
+    "[15:29:21] ✓ Dashboard: Budget remaining card visible",
+    "[15:29:21] ✓ Dashboard: Financial health indicator",
+    "[15:29:21] ✓ Dashboard: Add transaction button",
+    "[15:29:21] \n🧭 TEST 3: Navigation",
+    "[15:29:21] ✗ Dashboard: Dashboard nav link",
+    "[15:29:22] ✗ Transactions: Transactions page loads",
+    "[15:29:24] ✓ Goals: Goals page loads",
+    "[15:29:24] ✓ Gamification: Trophy room loads",
+    "[15:29:25] ✓ Dashboard: Reports page loads",
+    "[15:29:25] ✓ Dashboard: Generate report button",
+    "[15:29:25] \n📱 TEST 4: Mobile Responsiveness (Portrait)",
+    "[15:29:26] ✓ Mobile Responsiveness: Dashboard on mobile loads",
+    "[15:29:26] ✗ Mobile Responsiveness: Bottom navigation visible",
+    "[15:29:26] ✓ Mobile Responsiveness: Cards render on mobile",
+    "[15:29:26]   → 10 cards found",
+    "[15:29:26] \n📱 TEST 5: Mobile Responsiveness (Landscape)",
+    "[15:29:26] ✓ Mobile Responsiveness: Dashboard on landscape loads",
+    "[15:29:26] \n🎨 TEST 6: UI/UX Quality Checks",
+    "[15:29:29] ✓ UI/UX Quality: No critical console errors",
+    "[15:29:29]   → Clean",
+    "[15:29:29] ✓ UI/UX Quality: Main content area exists",
+    "[15:29:29] ✓ UI/UX Quality: Buttons rendered",
+    "[15:29:29]   → 2 buttons",
+    "[15:29:29] \n╔════════════════════════════════════════╗",
+    "[15:29:29] ║           TEST SUMMARY                  ║",
+    "[15:29:29] ╚════════════════════════════════════════╝\n",
+    "[15:29:29] ✓ Authentication & Setup: 2/2 (100%)",
+    "[15:29:29] ⚠ Dashboard: 7/8 (88%)",
+    "[15:29:29] ✗ Transactions: 0/1 (0%)",
+    "[15:29:29] ✓ Goals: 1/1 (100%)",
+    "[15:29:29] ✓ Gamification: 1/1 (100%)",
+    "[15:29:29] ✗ Mobile Responsiveness: 3/4 (75%)",
+    "[15:29:29] ✓ UI/UX Quality: 3/3 (100%)",
+    "[15:29:29] \n📊 Overall: 17/20 tests passed (85%)\n",
+    "[15:29:29] 🐛 Bugs Found:",
+    "[15:29:29] \n  🔴 HIGH PRIORITY (1):",
+    "[15:29:29]     • Signup navigation timeout or error"
+  ]
+}

@@ -160,17 +160,18 @@ export default function TransactionsPage() {
         date: new Date(date).toISOString(),
         accountId: accountId || null
       });
-      
+
       setAmount('');
       setDescription('');
       setCategory('food');
       setDate(new Date().toISOString().split('T')[0]);
       setAccountId('');
       setShowForm(false);
-      fetchTransactions();
+      await fetchTransactions();
     } catch (error) {
       console.error('Failed to add transaction:', error);
-      alert('Failed to add transaction. Please try again.');
+      const errorMsg = error instanceof Error ? error.message : 'Failed to add transaction. Please try again.';
+      alert(errorMsg);
     }
   };
 

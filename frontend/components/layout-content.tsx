@@ -31,9 +31,7 @@ export function LayoutContent({ children }: { children: ReactNode }) {
       {showNav && <Navbar />}
 
       {/* Page content */}
-      <main
-        className={`flex-1 p-4 pb-24 md:pb-6 ${!showNav ? 'max-w-7xl mx-auto' : ''}`}
-      >
+      <main className={`flex-1 overflow-y-auto ${showNav ? 'p-3 sm:p-4 pb-20 sm:pb-6 md:pb-6' : 'p-3 sm:p-4'} ${!showNav ? 'max-w-7xl mx-auto' : ''}`}>
         {showNav && (
           <div className="flex justify-end mb-4">
             <ThemeToggle />

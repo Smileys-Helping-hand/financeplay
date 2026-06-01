@@ -1,0 +1,94 @@
+
+=== TEST 1: DESKTOP VIEWPORT NAVIGATION ===
+Navigating to home...
+✓ Home loaded
+Navigating to dashboard...
+Console Warning: [Fast Refresh] performing full reload
+
+Fast Refresh will perform a full reload when you edit a file that's imported by modules outside of the React rendering tree.
+You might have a file which exports a React component but also exports a value that is imported by a non-React component file.
+Consider migrating the non-React component export to a separate file and importing it into both files.
+
+It is also possible the parent component of the component you edited is a class component, which disables Fast Refresh.
+Fast Refresh requires at least one parent function component in your React tree.
+✓ Dashboard loaded with proper title
+
+Testing dashboard buttons...
+✓ Add Transaction button visible
+✓ Add Transaction button clickable
+
+Navigating to transactions page...
+
+Testing transaction form...
+Found 0 category button(s)
+
+Attempting to create test transaction...
+
+=== TEST 2: GOALS PAGE ===
+✓ Goals page loaded
+
+=== TEST 3: VAULTS PAGE ===
+✓ Vaults page loaded
+
+=== TEST 4: TROPHY ROOM ===
+✓ Trophy room loaded
+
+=== TEST 5: LOG/LOOT PAGE ===
+✓ Log/Loot page loaded
+
+=== TEST 6: REPORTS PAGE ===
+
+=== TEST 7: LOANS PAGE ===
+✓ Loans page loaded
+
+=== TEST 8: MOBILE VIEWPORT (Portrait) ===
+✓ Dashboard loaded on mobile
+
+=== TEST 9: MOBILE VIEWPORT (Landscape) ===
+✓ Dashboard loaded on mobile landscape
+
+=== TEST 10: SETTINGS PAGE ===
+✓ Settings page loaded
+
+
+=== TEST SUMMARY ===
+Total tests passed: 31
+Total errors: 17
+
+Errors found:
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch transactions: AxiosError
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch transactions: AxiosError
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch accounts: AxiosError
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch accounts: AxiosError
+  - Transactions page title not found
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch goals: AxiosError
+  - Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+  - Console Error: Failed to fetch goals: AxiosError
+  - Reports page not found
+  - Console Error: Failed to load resource: the server responded with a status of 404 (Not Found)
+  - Console Error: Failed to load resource: the server responded with a status of 404 (Not Found)
+  - Bottom navigation not visible on mobile
+
+=== ERRORS ===
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch transactions: AxiosError
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch transactions: AxiosError
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch accounts: AxiosError
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch accounts: AxiosError
+Transactions page title not found
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch goals: AxiosError
+Console Error: Failed to load resource: the server responded with a status of 401 (Unauthorized)
+Console Error: Failed to fetch goals: AxiosError
+Reports page not found
+Console Error: Failed to load resource: the server responded with a status of 404 (Not Found)
+Console Error: Failed to load resource: the server responded with a status of 404 (Not Found)
+Bottom navigation not visible on mobile
