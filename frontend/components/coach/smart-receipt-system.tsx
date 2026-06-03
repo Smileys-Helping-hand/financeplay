@@ -91,7 +91,7 @@ export function SmartReceiptSystem({ userMessage, onClose, onCreateReceipt }: Sm
     }
 
     // Extract category based on keywords
-    const categoryMap: Record<string, string> = {
+    const categoryMap: Record<string, string[]> = {
       coffee: ['coffee', 'cafe', 'starbucks', 'barista'],
       food: ['lunch', 'dinner', 'breakfast', 'eat', 'restaurant', 'pizza', 'burger'],
       shopping: ['shop', 'shopping', 'buy', 'purchase', 'store', 'mall', 'outlet'],
@@ -141,7 +141,8 @@ export function SmartReceiptSystem({ userMessage, onClose, onCreateReceipt }: Sm
         category: receipt.category,
         description: `${receipt.placeName}`,
         date: receipt.date,
-        accountId: null
+        accountId: null,
+        userId: 'default-user'
       });
 
       onCreateReceipt(updatedReceipt);
