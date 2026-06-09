@@ -169,7 +169,7 @@ export default function LoginPage() {
             </div>
 
             <Link href="/signup">
-              <Button variant="outline" className="w-full" size="lg">
+              <Button variant="secondary" className="w-full" size="lg">
                 <UserPlus className="h-5 w-5 mr-2" />
                 Create Account
               </Button>
@@ -185,3 +185,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

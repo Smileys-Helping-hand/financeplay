@@ -152,7 +152,7 @@ export function EcosystemAdminPanel() {
           {masterKeyVisible && (
             <div className="flex gap-2">
               <Button
-                variant="default"
+                variant="primary"
                 size="sm"
                 className="flex-1"
                 onClick={() => copyToClipboard(stats.masterApiKey, 'master')}
@@ -168,7 +168,7 @@ export function EcosystemAdminPanel() {
                 )}
               </Button>
 
-              <Button variant="outline" size="sm">
+              <Button variant="secondary" size="sm">
                 Regenerate Key
               </Button>
             </div>
@@ -299,7 +299,7 @@ export function EcosystemAdminPanel() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 text-xs">
+                    <Button variant="secondary" size="sm" className="flex-1 text-xs">
                       Configure
                     </Button>
                     <Button
@@ -362,3 +362,5 @@ export function EcosystemAdminPanel() {
     </div>
   );
 }
+
+

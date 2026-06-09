@@ -358,7 +358,7 @@ export default function DashboardPage() {
               <p className="text-sm text-zinc-400">No transactions yet.</p>
               <p className="text-xs text-zinc-500">Start logging your spending to track where your money goes.</p>
               <Link href="/transactions">
-                <Button size="sm" variant="outline" className="mt-2">
+                <Button size="sm" variant="secondary" className="mt-2">
                   <Plus className="h-4 w-4 mr-1.5" />
                   Add First Transaction
                 </Button>
@@ -414,4 +414,5 @@ export default function DashboardPage() {
     </ErrorBoundary>
   );
 }
+
 

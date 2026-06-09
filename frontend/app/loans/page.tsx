@@ -294,7 +294,7 @@ export default function LoansPage() {
               </div>
               <div className="flex gap-2 pt-2">
                 <Button type="submit" className="bg-primary">Add Loan</Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+                <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
               </div>
             </form>
           </Card>
@@ -362,20 +362,20 @@ export default function LoansPage() {
 
                   {/* Actions */}
                   <div className="px-4 pb-3 flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" onClick={() => setPayingLoanId(payingLoanId === loan.id ? null : loan.id)}>
+                    <Button size="sm" variant="secondary" onClick={() => setPayingLoanId(payingLoanId === loan.id ? null : loan.id)}>
                       + Record Payment
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => setExpandedLoan(isExpanded ? null : loan.id)}>
+                    <Button size="sm" variant="secondary" onClick={() => setExpandedLoan(isExpanded ? null : loan.id)}>
                       {isExpanded ? <ChevronUp className="h-3 w-3 mr-1" /> : <ChevronDown className="h-3 w-3 mr-1" />}
                       History ({loan.payments.length})
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => setShowSchedule(hasSchedule ? null : loan.id)}>
+                    <Button size="sm" variant="secondary" onClick={() => setShowSchedule(hasSchedule ? null : loan.id)}>
                       Repayment Schedule
                     </Button>
-                    <Button size="sm" variant="outline" className="text-primary" onClick={() => handleGetTip(loan)} disabled={loadingTip}>
+                    <Button size="sm" variant="secondary" className="text-primary" onClick={() => handleGetTip(loan)} disabled={loadingTip}>
                       {loadingTip ? '...' : 'AI Tips'}
                     </Button>
-                    <Button size="sm" variant="outline" className="text-red-400 ml-auto" onClick={() => handleDelete(loan.id)}>
+                    <Button size="sm" variant="secondary" className="text-red-400 ml-auto" onClick={() => handleDelete(loan.id)}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -398,7 +398,7 @@ export default function LoansPage() {
                           <Input value={payNotes} onChange={e => setPayNotes(e.target.value)} placeholder="e.g., March instalment" />
                         </div>
                         <Button size="sm" onClick={() => handleAddPayment(loan.id)} className="bg-primary">Save</Button>
-                        <Button size="sm" variant="outline" onClick={() => setPayingLoanId(null)}>Cancel</Button>
+                        <Button size="sm" variant="secondary" onClick={() => setPayingLoanId(null)}>Cancel</Button>
                       </div>
                     </div>
                   )}
@@ -530,3 +530,4 @@ export default function LoansPage() {
     </ErrorBoundary>
   );
 }
+

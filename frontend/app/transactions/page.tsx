@@ -282,7 +282,7 @@ export default function TransactionsPage() {
             </Button>
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               size="lg"
               className="gap-2"
               onClick={() => fileInputRef.current?.click()}
@@ -484,7 +484,7 @@ export default function TransactionsPage() {
                   <Plus className="h-4 w-4 mr-2" />
                   Add Transaction
                 </Button>
-                <Button type="button" variant="outline" size="lg" onClick={() => setShowForm(false)}>
+                <Button type="button" variant="secondary" size="lg" onClick={() => setShowForm(false)}>
                   Cancel
                 </Button>
               </div>
@@ -724,3 +724,4 @@ export default function TransactionsPage() {
     </ErrorBoundary>
   );
 }
+

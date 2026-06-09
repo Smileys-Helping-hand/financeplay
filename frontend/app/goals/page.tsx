@@ -228,7 +228,7 @@ export default function GoalsPage() {
             return (
               <Card key={goal.id} className="space-y-3 relative">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => handleDelete(goal.id)}
                   className="absolute top-4 right-4 text-red-400 hover:text-red-300"
@@ -256,7 +256,7 @@ export default function GoalsPage() {
                   </div>
                 )}
                 <Button 
-                  variant="outline" 
+                  variant="secondary" 
                   size="sm" 
                   className="w-full"
                   onClick={() => handleUpdateProgress(goal.id, goal.currentAmount)}
@@ -272,3 +272,4 @@ export default function GoalsPage() {
     </ErrorBoundary>
   );
 }
+

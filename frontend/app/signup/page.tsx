@@ -182,7 +182,7 @@ export default function SignupPage() {
             </div>
 
             <Link href="/login">
-              <Button variant="outline" className="w-full" size="lg">
+              <Button variant="secondary" className="w-full" size="lg">
                 <LogIn className="h-5 w-5 mr-2" />
                 Sign In
               </Button>
@@ -198,3 +198,4 @@ export default function SignupPage() {
     </div>
   );
 }
+

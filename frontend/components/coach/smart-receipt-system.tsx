@@ -284,7 +284,7 @@ export function SmartReceiptSystem({ userMessage, onClose, onCreateReceipt }: Sm
 
               <div className="flex gap-2 pt-2">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   onClick={() => setStep('parse')}
                   className="flex-1"
                 >
@@ -338,3 +338,4 @@ export function SmartReceiptSystem({ userMessage, onClose, onCreateReceipt }: Sm
     </AnimatePresence>
   );
 }
+

@@ -211,7 +211,7 @@ export default function AccountsPage() {
               </div>
               <div className="flex gap-2">
                 <Button type="submit">Add Account</Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
                   Cancel
                 </Button>
               </div>
@@ -228,7 +228,7 @@ export default function AccountsPage() {
           {accounts.map((account) => (
             <Card key={account.id} className="p-6 space-y-4 relative">
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => handleDelete(account.id)}
                 className="absolute top-4 right-4 text-red-400 hover:text-red-300"
@@ -254,7 +254,7 @@ export default function AccountsPage() {
               </div>
 
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 className="w-full"
                 onClick={() => handleUpdateBalance(account.id, account.balance)}
@@ -280,3 +280,4 @@ export default function AccountsPage() {
     </ErrorBoundary>
   );
 }
+

@@ -121,7 +121,7 @@ export default function SettingsPage() {
             <p>Your account is secured via Firebase Authentication.</p>
             <p>Authentication provider: <span className="text-slate-200">Email / Password</span></p>
           </div>
-          <Button variant="outline" className="text-xs"
+          <Button variant="secondary" className="text-xs"
             onClick={() => alert('Password reset link sent to your email!')}>
             Reset Password
           </Button>
@@ -150,3 +150,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

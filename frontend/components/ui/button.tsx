@@ -4,23 +4,23 @@ import { cn } from '../../lib/utils';
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-xl text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 ring-offset-slate-950',
+  'inline-flex items-center justify-center font-inter font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-slate-blue/20 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-white hover:bg-primary/90',
-        outline: 'border border-slate-700 bg-transparent hover:bg-slate-900/60',
-        ghost: 'hover:bg-slate-800/80',
-        subtle: 'bg-slate-800 text-slate-100 hover:bg-slate-700'
+        primary: 'bg-heritage-navy text-cream-ivory rounded hover:bg-slate-charcoal shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1',
+        secondary: 'border-1.5 border-heritage-navy bg-transparent text-heritage-navy rounded hover:bg-heritage-navy/5 active:bg-heritage-navy/10',
+        tertiary: 'bg-transparent text-slate-blue rounded-none border-b border-slate-blue hover:text-heritage-navy hover:border-heritage-navy',
+        ghost: 'bg-transparent text-heritage-navy hover:bg-cream-ivory/50',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 px-3',
-        lg: 'h-11 px-8'
+        sm: 'px-4 py-2 text-body-sm',
+        default: 'px-8 py-4 text-body',
+        lg: 'px-10 py-5 text-body-lg',
       }
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'primary',
       size: 'default'
     }
   }

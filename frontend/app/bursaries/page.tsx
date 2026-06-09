@@ -169,7 +169,7 @@ export default function BursariesPage() {
               </div>
               <div className="flex gap-2">
                 <Button type="submit">Add Bursary</Button>
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                <Button type="button" variant="secondary" onClick={() => setShowForm(false)}>
                   Cancel
                 </Button>
               </div>
@@ -186,7 +186,7 @@ export default function BursariesPage() {
           {bursaries.map((bursary) => (
             <Card key={bursary.id} className="space-y-3 relative">
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={() => handleDelete(bursary.id)}
                 className="absolute top-4 right-4 text-red-400 hover:text-red-300"
@@ -225,3 +225,4 @@ export default function BursariesPage() {
     </ErrorBoundary>
   );
 }
+
