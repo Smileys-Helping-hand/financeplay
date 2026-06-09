@@ -106,8 +106,19 @@ export function BookingForm({ onSubmit, onSuccess }: BookingFormProps) {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Send booking to API
+      const response = await fetch('/api/bookings/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrors({ submit: result.error || 'Failed to book call. Please try again.' });
+        return;
+      }
 
       if (onSubmit) {
         onSubmit(formData);
@@ -120,7 +131,9 @@ export function BookingForm({ onSubmit, onSuccess }: BookingFormProps) {
         if (onSuccess) onSuccess();
       }, 2000);
     } catch (error) {
-      setErrors({ submit: 'Failed to book call. Please try again.' });
+      setErrors({
+        submit: error instanceof Error ? error.message : 'Failed to book call. Please try again.'
+      });
     } finally {
       setLoading(false);
     }

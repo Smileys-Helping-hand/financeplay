@@ -102,3 +102,53 @@ model DreamVault {
   updatedAt     DateTime @updatedAt
 }
 
+// ──────────────────────────────────────────────────────────────────────────
+// Wealth Management Bookings & Advisors
+// ──────────────────────────────────────────────────────────────────────────
+
+model Advisor {
+  id            String    @id @default(cuid())
+  name          String
+  title         String    // e.g. "Senior Advisor", "Founder"
+  email         String    @unique
+  phone         String?
+  credentials   String?   // e.g. "CFA, CFP, 25 years experience"
+  specialties   String    @default("[]") // JSON array of service specialties
+  bio           String?
+  photoUrl      String?
+  isActive      Boolean   @default(true)
+  availableHours String   @default("[]") // JSON array of available time slots
+  bookings      Booking[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Booking {
+  id              String    @id @default(cuid())
+  fullName        String
+  email           String    @unique(map: "booking_email_date_unique")
+  phone           String
+  country         String    @default("za")
+  services        String    // JSON array of selected services
+  goal            String    // Client's primary wealth goal
+  status          String    @default("pending") // pending, confirmed, completed, cancelled
+  preferredDate   DateTime
+  preferredTime   String    // e.g. "14:00"
+
+  // Assigned details
+  advisorId       String?
+  advisor         Advisor?  @relation(fields: [advisorId], references: [id])
+  zoomLink        String?
+  confirmationSentAt DateTime?
+  reminderSentAt  DateTime?
+
+  // Notes & follow-up
+  notes           String?   // Internal notes from advisor
+  followUpDate    DateTime?
+  followUpNotes   String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([email, preferredDate])
+}
